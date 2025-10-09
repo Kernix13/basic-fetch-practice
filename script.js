@@ -1,6 +1,11 @@
-const main = document.getElementById('main');
+"use strict"
 
-async function fetchUserData(url) {
+const main = document.getElementById('main');
+const getAllUsers = document.getElementById('get-all-users');
+const usersUnderTen = document.getElementById('users-under-ten');
+const reset = document.getElementById('reset');
+
+async function fetchUserData(url, fx) {
   try {
     const response = await fetch(url);
 
@@ -8,14 +13,18 @@ async function fetchUserData(url) {
       throw new Error('Could not fetch data');
     }
     const data = await response.json();
-    createCard(data);
+    fx(data);
+    console.log(data)
     return data;
   } catch (err) {
     console.error(err);
   }
 }
 
-fetchUserData('https://dan-collins-dev.github.io/dummy-data-fetching-repo/data/users.json');
+function createFilteredCard(arr) {
+  const filtered = arr.filter(obj => obj.yearsEmployed < 10);
+  createCard(filtered);
+}
 
 function createCard(arr) {
 
@@ -49,8 +58,16 @@ function createCard(arr) {
 
     main.append(card)
   })
-  
-
-  
-  
 }
+
+getAllUsers.addEventListener('click', () => {
+  fetchUserData('https://dan-collins-dev.github.io/dummy-data-fetching-repo/data/users.json', createCard);
+});
+
+usersUnderTen.addEventListener('click', () => {
+  fetchUserData('https://dan-collins-dev.github.io/dummy-data-fetching-repo/data/users.json', createFilteredCard);
+})
+
+reset.addEventListener('click', () => {
+  main.innerText = '';
+});
