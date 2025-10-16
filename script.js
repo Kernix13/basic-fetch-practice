@@ -1,9 +1,12 @@
 "use strict"
 
+// https://dan-collins-dev.github.io/dummy-data-fetching-repo/data/users.json
+
 const main = document.getElementById('main');
 const getAllUsers = document.getElementById('get-all-users');
 const usersUnderTen = document.getElementById('users-under-ten');
 const reset = document.getElementById('reset');
+const jsonUrl = 'https://dan-collins-dev.github.io/dummy-data-fetching-repo/data/users.json';
 
 async function fetchUserData(url, fx) {
   try {
@@ -14,7 +17,6 @@ async function fetchUserData(url, fx) {
     }
     const data = await response.json();
     fx(data);
-    console.log(data)
     return data;
   } catch (err) {
     console.error(err);
@@ -49,11 +51,10 @@ function createCard(arr) {
         card.append(cardItem);
       }
       
-      if (key !== 'id' && key !== 'lastName' && key !== 'yearsEmployed') {
+      if (key === 'email' || key === 'companyName') {
         cardItem.append(document.createTextNode(item[key]));
         card.append(cardItem);
       }
-
     }
 
     main.append(card)
@@ -61,13 +62,16 @@ function createCard(arr) {
 }
 
 getAllUsers.addEventListener('click', () => {
-  fetchUserData('https://dan-collins-dev.github.io/dummy-data-fetching-repo/data/users.json', createCard);
+  fetchUserData(jsonUrl, createCard);
 });
 
-usersUnderTen.addEventListener('click', () => {
-  fetchUserData('https://dan-collins-dev.github.io/dummy-data-fetching-repo/data/users.json', createFilteredCard);
+usersUnderTen.addEventListener('click', (e) => {
+  fetchUserData(jsonUrl, createFilteredCard);
 })
 
-reset.addEventListener('click', () => {
+// I would like to use this if the other buttons are clicked a 2nd time
+function resetDom() {
   main.innerText = '';
-});
+}
+
+reset.addEventListener('click', resetDom);
